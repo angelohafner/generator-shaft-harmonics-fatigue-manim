@@ -261,11 +261,6 @@ class FrequenciaTorque(Scene):
         configure_scene(self)
 
         title = make_title("Electrical harmonic and torque frequency")
-        note = make_note(
-            "The link between harmonic order and torque depends on sequence, machine, and grid.",
-            font_size=23,
-            color=PALETTE["muted"],
-        ).next_to(title, DOWN, buff=0.18)
 
         phase = ValueTracker(0.0)
 
@@ -321,8 +316,6 @@ class FrequenciaTorque(Scene):
             stroke_width=3.1,
             max_tip_length_to_length_ratio=0.05,
         )
-        spectrum_title = Text("torque components", font_size=27, color=PALETTE["text"])
-        spectrum_title.move_to(spectrum_left + RIGHT * 1.95 + UP * 1.36)
         spectrum_axis_label = MathTex(r"f", font_size=36, color=PALETTE["muted"]).next_to(spectrum_axis, RIGHT, buff=0.1)
 
         selected_x = shaft_center[0]
@@ -367,7 +360,7 @@ class FrequenciaTorque(Scene):
                 color=PALETTE["resonance"],
             ).set_z_index(8)
         )
-        spectrum = VGroup(spectrum_axis, spectrum_title, spectrum_axis_label, spectrum_components)
+        spectrum = VGroup(spectrum_axis, spectrum_axis_label, spectrum_components)
 
         highlight = MathTex(
             r"f_{torque}\approx f_n",
@@ -380,9 +373,9 @@ class FrequenciaTorque(Scene):
             color=PALETTE["text"],
         ).to_edge(DOWN, buff=0.32)
 
-        self.play(Write(title), FadeIn(note, shift=DOWN * 0.1))
+        self.play(Write(title))
         self.play(FadeIn(shaft), FadeIn(shaft_surface), Create(torsion_wave), Create(mode_arc), FadeIn(mode_label))
-        self.play(Create(spectrum_axis), FadeIn(spectrum_title), FadeIn(spectrum_axis_label))
+        self.play(Create(spectrum_axis), FadeIn(spectrum_axis_label))
         self.play(
             LaggedStart(*[FadeIn(component, shift=UP * 0.08) for component in spectrum_components], lag_ratio=0.12),
         )
