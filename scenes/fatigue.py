@@ -337,16 +337,16 @@ def make_fatigue_icon() -> VGroup:
 
 def make_icon_node(label: str, icon: Mobject, color: str | ManimColor) -> VGroup:
     """Create a small visual node for the conclusion flow."""
-    box = RoundedRectangle(width=1.78, height=1.72, corner_radius=0.08, color=color, stroke_width=1.8)
+    box = RoundedRectangle(width=1.92, height=1.84, corner_radius=0.08, color=color, stroke_width=2.0)
     box.set_fill(PALETTE["panel"], opacity=0.95)
     icon = icon.copy()
-    icon.scale_to_fit_width(1.08)
-    if icon.height > 0.68:
-        icon.scale_to_fit_height(0.68)
-    icon.move_to(box.get_center() + UP * 0.33)
-    text = Text(label, font_size=16.2, color=PALETTE["text"], line_spacing=0.9)
-    text.set_max_width(1.48)
-    text.next_to(icon, DOWN, buff=0.18)
+    icon.scale_to_fit_width(1.18)
+    if icon.height > 0.76:
+        icon.scale_to_fit_height(0.76)
+    icon.move_to(box.get_center() + UP * 0.36)
+    text = Text(label, font_size=17.2, color=PALETTE["text"], line_spacing=0.9)
+    text.set_max_width(1.62)
+    text.next_to(icon, DOWN, buff=0.2)
     return VGroup(box, icon, text)
 
 
@@ -399,8 +399,9 @@ class Conclusao(Scene):
             make_icon_node("Resonance", make_resonance_icon(), PALETTE["resonance"]),
             make_icon_node("Stress\ncycles", make_cycle_stress_icon(), PALETTE["fatigue"]),
             make_icon_node("Fatigue", make_fatigue_icon(), PALETTE["danger"]),
-        ).arrange(RIGHT, buff=0.46)
-        nodes.move_to(UP * 1.54)
+        )
+        for node, x_pos in zip(nodes, np.linspace(-5.55, 5.55, len(nodes))):
+            node.move_to(np.array([x_pos, 1.54, 0.0]))
 
         arrows = VGroup()
         for left_node, right_node in zip(nodes[:-1], nodes[1:]):
