@@ -416,25 +416,11 @@ class Conclusao(Scene):
                 )
             )
 
-        caution_font_size = 28
-        caution_sentence = VGroup(
-            Text("An", font_size=caution_font_size, color=PALETTE["text"]),
-            Text("isolated", font_size=caution_font_size, color=PALETTE["text"]),
-            Text("harmonic", font_size=caution_font_size, color=PALETTE["text"]),
-            Text("does", font_size=caution_font_size, color=PALETTE["text"]),
-            Text("not", font_size=caution_font_size, color=PALETTE["text"]),
-            Text("determine", font_size=caution_font_size, color=PALETTE["text"]),
-            Text("failure.", font_size=caution_font_size, color=PALETTE["text"]),
-        ).arrange(RIGHT, buff=0.13)
-
         message = VGroup(
-            caution_sentence,
-            VGroup(
-                Text("Risk increases with", font_size=23, color=PALETTE["muted"]),
-                MathTex(r"A_h,\ f_{torque}\approx f_n,\ \zeta,\ t,\ D", font_size=35, color=PALETTE["resonance"]),
-            ).arrange(RIGHT, buff=0.22),
-        ).arrange(DOWN, buff=0.14)
-        message.move_to(DOWN * 0.25)
+            Text("Risk increases with", font_size=34, color=PALETTE["muted"]),
+            MathTex(r"A_h,\ f_{torque}\approx f_n,\ \zeta,\ t,\ D", font_size=46, color=PALETTE["resonance"]),
+        ).arrange(RIGHT, buff=0.28)
+        message.move_to(DOWN * 0.2)
 
         mitigation_title = Text("Mitigation", font_size=40, color=PALETTE["text"])
         mitigation_items = VGroup(
