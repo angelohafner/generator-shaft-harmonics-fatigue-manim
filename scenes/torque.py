@@ -125,7 +125,7 @@ class TorqueEletromagnetico(Scene):
         tm_label = MathTex(r"T_m", font_size=34, color=PALETTE["mechanical"])
         tm_label.move_to(left_center + LEFT * 1.02 + UP * 0.78)
         te_label = MathTex(r"T_e(t)", font_size=34, color=PALETTE["electric"])
-        te_label.move_to(right_center + RIGHT * 1.05 + DOWN * 0.48)
+        te_label.move_to(right_center + RIGHT * 1.58 + DOWN * 0.58)
 
         torque_pulse = always_redraw(
             lambda: VGroup(
@@ -186,7 +186,7 @@ class TorqueEletromagnetico(Scene):
         turbine_pulse_label.set_z_index(7)
 
         torque_state = Text("electric torque oscillates", font_size=17, color=PALETTE["electric"])
-        torque_state.move_to(right_center + RIGHT * 1.85 + UP * 0.46)
+        torque_state.move_to(right_center + RIGHT * 2.35 + UP * 0.48)
         torque_state.set_z_index(7)
 
         spinning_parts = [
