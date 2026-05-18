@@ -223,103 +223,94 @@ class FrequenciaTorque(Scene):
         ).next_to(title, DOWN, buff=0.18)
 
         phase = ValueTracker(0.0)
-        rows = [
-            ["Balanced\nfundamental", "Dominant\naverage torque"],
-            ["Harmonics /\nunbalance", "Pulsating\ntorque"],
-            ["Component near\ntorsional mode", "Higher\nvibration risk"],
-        ]
-        from utils.plot_helpers import make_simple_table
 
-        table = make_simple_table(
-            ["Electrical\ncomponent", "Possible\neffect"],
-            rows,
-            col_widths=[3.25, 2.75],
-            row_height=0.88,
-            font_size=18,
-        ).move_to(LEFT * 3.2 + DOWN * 0.36)
-
-        right_diagram_drop = DOWN * 1.42
-        shaft_start = RIGHT * 1.42 + DOWN * 0.22 + right_diagram_drop
-        shaft_end = RIGHT * 5.72 + DOWN * 0.22 + right_diagram_drop
+        shaft_start = LEFT * 6.1 + DOWN * 1.54
+        shaft_end = RIGHT * 6.1 + DOWN * 1.54
         shaft_center = (shaft_start + shaft_end) / 2
         shaft = always_redraw(
             lambda: make_cylindrical_shaft(
                 shaft_start,
                 shaft_end,
-                radius=0.18,
+                radius=0.28,
                 twist=0.78 * np.sin(phase.get_value()),
-                bands=8,
+                bands=14,
             ).set_z_index(2)
         )
         torsion_wave = always_redraw(
             lambda: make_torsion_wave(
                 shaft_start,
                 shaft_end,
-                amplitude=0.12 + 0.045 * np.sin(phase.get_value()) ** 2,
-                turns=4.5,
+                amplitude=0.19 + 0.06 * np.sin(phase.get_value()) ** 2,
+                turns=5.2,
                 phase=1.15 * phase.get_value(),
                 color=PALETTE["resonance"],
             ).set_z_index(5)
         )
-        mode_arc = Arc(radius=1.0, start_angle=PI * 0.12, angle=PI * 0.78, color=PALETTE["resonance"], stroke_width=4)
-        mode_arc.move_to(shaft_center + UP * 0.18)
-        mode_label = MathTex(r"f_n", color=PALETTE["resonance"], font_size=34)
-        mode_label.move_to(shaft_center + RIGHT * 0.85 + UP * 1.04)
+        mode_arc = Arc(
+            radius=2.15,
+            start_angle=PI * 0.18,
+            angle=PI * 0.64,
+            color=PALETTE["resonance"],
+            stroke_width=5.2,
+        )
+        mode_arc.move_to(shaft_center + UP * 0.52)
+        mode_label = MathTex(r"f_n", color=PALETTE["resonance"], font_size=46)
+        mode_label.move_to(shaft_center + RIGHT * 1.82 + UP * 1.32)
 
-        spectrum_y = 1.58 + right_diagram_drop[1]
-        spectrum_left = np.array([1.25, spectrum_y, 0.0])
-        spectrum_right = np.array([5.55, spectrum_y, 0.0])
+        spectrum_y = 0.58
+        spectrum_left = np.array([-5.85, spectrum_y, 0.0])
+        spectrum_right = np.array([5.85, spectrum_y, 0.0])
         spectrum_axis = Arrow(
             spectrum_left,
             spectrum_right,
             buff=0.0,
             color=PALETTE["muted"],
-            stroke_width=2.2,
+            stroke_width=3.1,
             max_tip_length_to_length_ratio=0.05,
         )
-        spectrum_title = Text("torque components", font_size=16, color=PALETTE["text"])
-        spectrum_title.move_to(spectrum_left + RIGHT * 0.35 + UP * 0.78)
-        spectrum_axis_label = MathTex(r"f", font_size=22, color=PALETTE["muted"]).next_to(spectrum_axis, RIGHT, buff=0.06)
+        spectrum_title = Text("torque components", font_size=27, color=PALETTE["text"])
+        spectrum_title.move_to(spectrum_left + RIGHT * 1.95 + UP * 0.86)
+        spectrum_axis_label = MathTex(r"f", font_size=36, color=PALETTE["muted"]).next_to(spectrum_axis, RIGHT, buff=0.1)
 
         selected_x = shaft_center[0]
         components = [
-            (1.72, 0.28, r"f_1", PALETTE["electric"], False),
-            (2.48, 0.42, r"f_2", PALETTE["electric"], False),
-            (selected_x, 1.22, r"f_{torque}", PALETTE["resonance"], True),
-            (4.72, 0.34, r"f_3", PALETTE["electric"], False),
+            (-5.35, 0.54, r"f_1", PALETTE["electric"], False),
+            (-3.65, 0.72, r"f_2", PALETTE["electric"], False),
+            (selected_x, 1.72, r"f_{torque}", PALETTE["resonance"], True),
+            (3.95, 0.58, r"f_3", PALETTE["electric"], False),
         ]
 
         spectrum_components = VGroup()
         for x_pos, height, label_text, color, selected in components:
             base = np.array([x_pos, spectrum_y, 0.0])
             top = base + UP * height
-            stem = Line(base, top, color=color, stroke_width=4.2 if selected else 2.7)
-            dot = Dot(top, radius=0.052 if selected else 0.035, color=color)
-            label = MathTex(label_text, font_size=20 if selected else 16, color=color)
+            stem = Line(base, top, color=color, stroke_width=6.2 if selected else 4.2)
+            dot = Dot(top, radius=0.075 if selected else 0.052, color=color)
+            label = MathTex(label_text, font_size=34 if selected else 26, color=color)
             if selected:
-                label.move_to(base + LEFT * 0.38 + DOWN * 0.23)
+                label.move_to(base + LEFT * 0.54 + DOWN * 0.34)
             else:
-                label.next_to(base, DOWN, buff=0.08)
+                label.next_to(base, DOWN, buff=0.11)
             spectrum_components.add(VGroup(stem, dot, label))
 
         excitation_arrow = always_redraw(
             lambda: Arrow(
-                np.array([selected_x, spectrum_y - 0.1, 0.0]),
-                shaft_center + UP * (0.36 + 0.03 * np.sin(phase.get_value()) ** 2),
-                buff=0.02,
+                np.array([selected_x, spectrum_y - 0.14, 0.0]),
+                shaft_center + UP * (0.57 + 0.05 * np.sin(phase.get_value()) ** 2),
+                buff=0.03,
                 color=PALETTE["resonance"],
-                stroke_width=3.8,
+                stroke_width=5.2,
                 max_tip_length_to_length_ratio=0.16,
             ).set_z_index(7)
         )
         excitation_dot = always_redraw(
             lambda: Dot(
                 interpolate(
-                    np.array([selected_x, spectrum_y - 0.2, 0.0]),
-                    shaft_center + UP * 0.45,
+                    np.array([selected_x, spectrum_y - 0.23, 0.0]),
+                    shaft_center + UP * 0.62,
                     (0.5 + 0.5 * np.sin(phase.get_value())) ** 1.4,
                 ),
-                radius=0.043,
+                radius=0.058,
                 color=PALETTE["resonance"],
             ).set_z_index(8)
         )
@@ -328,16 +319,15 @@ class FrequenciaTorque(Scene):
         highlight = MathTex(
             r"f_{torque}\approx f_n",
             color=PALETTE["resonance"],
-            font_size=38,
-        ).move_to(shaft_center + DOWN * 0.92)
+            font_size=50,
+        ).move_to(shaft_center + DOWN * 1.15)
         risk = make_note(
             "Risk increases when a torque component coincides with a torsional mode.",
-            font_size=24,
+            font_size=26,
             color=PALETTE["text"],
         ).to_edge(DOWN, buff=0.32)
 
         self.play(Write(title), FadeIn(note, shift=DOWN * 0.1))
-        self.play(FadeIn(table))
         self.play(FadeIn(shaft), Create(torsion_wave), Create(mode_arc), FadeIn(mode_label))
         self.play(Create(spectrum_axis), FadeIn(spectrum_title), FadeIn(spectrum_axis_label))
         self.play(
