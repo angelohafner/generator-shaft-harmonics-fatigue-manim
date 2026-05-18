@@ -278,7 +278,7 @@ class FrequenciaTorque(Scene):
             max_tip_length_to_length_ratio=0.05,
         )
         spectrum_title = Text("torque components", font_size=16, color=PALETTE["text"])
-        spectrum_title.move_to(spectrum_left + LEFT * 0.15 + UP * 0.78)
+        spectrum_title.move_to(spectrum_left + RIGHT * 0.35 + UP * 0.78)
         spectrum_axis_label = MathTex(r"f", font_size=22, color=PALETTE["muted"]).next_to(spectrum_axis, RIGHT, buff=0.06)
 
         selected_x = shaft_center[0]
