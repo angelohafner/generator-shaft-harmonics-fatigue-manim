@@ -125,7 +125,7 @@ class FadigaEixoGerador(Scene):
         configure_scene(self)
 
         title = make_title("Shaft fatigue buildup", font_size=34)
-        stress_eq = MathTex(r"\tau=\frac{T r}{J_p}", font_size=38, color=PALETTE["text"])
+        stress_eq = MathTex(r"\tau=\frac{T \times r}{J_p}", font_size=38, color=PALETTE["text"])
         stress_eq.move_to(LEFT * 1.0 + UP * 2.45)
         miner_eq = MathTex(r"D=\sum \frac{n_i}{N_i}", font_size=38, color=PALETTE["text"])
         n_definition = VGroup(
@@ -211,9 +211,9 @@ class FadigaEixoGerador(Scene):
         stress_title = Text("repeated torsional stress", font_size=21, color=PALETTE["text"]).next_to(stress_axes, UP, buff=0.16)
         stress_x_label = VGroup(
             Text("time", font_size=18, color=PALETTE["muted"]),
-            MathTex(r"t", font_size=22, color=PALETTE["muted"]),
+            MathTex(r"t\;(\mathrm{s})", font_size=22, color=PALETTE["muted"]),
         ).arrange(RIGHT, buff=0.08).next_to(stress_axes, DOWN, buff=0.2)
-        stress_y_label = MathTex(r"\tau(t)", font_size=30, color=PALETTE["muted"]).rotate(PI / 2)
+        stress_y_label = MathTex(r"\tau(t)\;(\mathrm{Pa})", font_size=27, color=PALETTE["muted"]).rotate(PI / 2)
         stress_y_label.next_to(stress_axes, LEFT, buff=0.25)
 
         sn_axes, sn_curve, _ = make_sn_curve(width=4.25, height=2.45)
@@ -232,7 +232,10 @@ class FadigaEixoGerador(Scene):
             Text("cycles", font_size=18, color=PALETTE["muted"]),
             MathTex(r"N", font_size=22, color=PALETTE["muted"]),
         ).arrange(RIGHT, buff=0.08).next_to(sn_axes, DOWN, buff=0.22)
-        sn_y_label = Text("stress amplitude", font_size=16, color=PALETTE["muted"]).rotate(PI / 2)
+        sn_y_label = VGroup(
+            Text("stress amplitude", font_size=15, color=PALETTE["muted"]),
+            MathTex(r"(\mathrm{Pa})", font_size=18, color=PALETTE["muted"]),
+        ).arrange(RIGHT, buff=0.08).rotate(PI / 2)
         sn_y_label.next_to(sn_axes, LEFT, buff=0.28)
         sn_labels = VGroup(sn_title, sn_x_label, sn_y_label)
 
