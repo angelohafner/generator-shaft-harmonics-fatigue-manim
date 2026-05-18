@@ -420,7 +420,7 @@ class Conclusao(Scene):
             Text("Risk increases with", font_size=34, color=PALETTE["muted"]),
             MathTex(r"A_h,\ f_{torque}\approx f_n,\ \zeta,\ t,\ D", font_size=46, color=PALETTE["resonance"]),
         ).arrange(RIGHT, buff=0.28)
-        message.move_to(DOWN * 0.2)
+        message.move_to(RIGHT * 0.45 + DOWN * 0.2)
 
         mitigation_title = Text("Mitigation", font_size=40, color=PALETTE["text"])
         mitigation_items = VGroup(
