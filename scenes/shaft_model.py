@@ -219,15 +219,6 @@ class ModeloTorcional(Scene):
             .next_to(model_mid, UP, buff=1.05)
             .set_opacity(1.0 if amplitude.get_value() > 0.95 else 0.0)
         )
-        amplification_arrow = always_redraw(
-            lambda: Arrow(
-                model_mid + DOWN * 0.95,
-                model_mid + UP * (0.72 + 0.2 * np.sin(phase.get_value()) ** 2),
-                color=PALETTE["danger"],
-                stroke_width=5,
-                max_tip_length_to_length_ratio=0.16,
-            ).set_opacity(1.0 if amplitude.get_value() > 0.95 else 0.0)
-        )
 
         self.play(Write(title), Write(equations))
         self.play(FadeIn(left_disc), FadeIn(right_disc), Create(spring), FadeIn(k_label), FadeIn(model_label))
@@ -240,7 +231,7 @@ class ModeloTorcional(Scene):
             FadeIn(moving_dot),
             FadeIn(state_label),
         )
-        self.add(warning, amplification_arrow)
+        self.add(warning)
         self.play(phase.animate.set_value(2.5 * PI), run_time=2.6, rate_func=linear)
         self.play(
             frequency.animate.set_value(1.55),
