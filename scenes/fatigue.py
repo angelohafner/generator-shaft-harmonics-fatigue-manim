@@ -318,10 +318,10 @@ def make_mitigation_icon(kind: str, label: str) -> VGroup:
     else:
         icon = make_fatigue_icon().scale(0.62)
 
-    text = Text(label, font_size=13.5, color=PALETTE["muted"])
-    text.set_max_width(1.35)
-    icon.scale_to_fit_height(0.58)
-    return VGroup(icon, text).arrange(DOWN, buff=0.1)
+    text = Text(label, font_size=17, color=PALETTE["muted"])
+    text.set_max_width(1.65)
+    icon.scale_to_fit_height(0.78)
+    return VGroup(icon, text).arrange(DOWN, buff=0.13)
 
 
 class Conclusao(Scene):
@@ -371,7 +371,7 @@ class Conclusao(Scene):
         ).arrange(DOWN, buff=0.1)
         message.move_to(DOWN * 0.25)
 
-        mitigation_title = Text("Mitigation", font_size=22, color=PALETTE["text"])
+        mitigation_title = Text("Mitigation", font_size=30, color=PALETTE["text"])
         mitigation_items = VGroup(
             make_mitigation_icon("modes", "modes"),
             make_mitigation_icon("filter", "filters"),
@@ -379,9 +379,12 @@ class Conclusao(Scene):
             make_mitigation_icon("monitor", "monitoring"),
             make_mitigation_icon("control", "control"),
             make_mitigation_icon("fatigue", "fatigue"),
-        ).arrange(RIGHT, buff=0.48)
-        mitigation_group = VGroup(mitigation_title, mitigation_items).arrange(DOWN, buff=0.18)
-        mitigation_group.move_to(DOWN * 2.28)
+        )
+        mitigation_y = -2.62
+        for item, x_pos in zip(mitigation_items, np.linspace(-5.85, 5.85, len(mitigation_items))):
+            item.move_to(np.array([x_pos, mitigation_y, 0.0]))
+        mitigation_title.move_to(UP * -1.72)
+        mitigation_group = VGroup(mitigation_title, mitigation_items)
 
         self.play(Write(title))
         self.play(LaggedStart(*[FadeIn(node, shift=UP * 0.1) for node in nodes], lag_ratio=0.08), Create(arrows))
