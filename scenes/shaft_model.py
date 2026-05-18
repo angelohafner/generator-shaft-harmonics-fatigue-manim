@@ -63,6 +63,60 @@ def place_pointer_disc_at_center(disc: VGroup, center: np.ndarray) -> VGroup:
     return disc
 
 
+def make_animated_shaft_surface(start: np.ndarray, end: np.ndarray, radius: float, phase: float) -> VGroup:
+    """Add moving highlights and cap rims to make the shaft read as a rotating cylinder."""
+    group = VGroup()
+    top = Line(
+        start + UP * radius * 0.52,
+        end + UP * radius * 0.52,
+        color=PALETTE["text"],
+        stroke_width=2.1,
+    )
+    top.set_opacity(0.26 + 0.08 * np.sin(phase) ** 2)
+    bottom = Line(
+        start + DOWN * radius * 0.62,
+        end + DOWN * radius * 0.62,
+        color=PALETTE["background"],
+        stroke_width=3.6,
+    )
+    bottom.set_opacity(0.3)
+    group.add(top, bottom)
+
+    for side, point in enumerate([start, end]):
+        rim = Ellipse(
+            width=radius * 0.9,
+            height=radius * 2.24,
+            color=PALETTE["shaft"],
+            stroke_width=3.0,
+        )
+        rim.set_fill(PALETTE["background"], opacity=0.12)
+        rim.set_opacity(0.62 + 0.18 * np.sin(phase + side * 1.7) ** 2)
+        rim.move_to(point)
+        inner_rim = Ellipse(
+            width=radius * 0.52,
+            height=radius * 1.55,
+            color=PALETTE["muted"],
+            stroke_width=1.35,
+        )
+        inner_rim.set_opacity(0.28)
+        inner_rim.move_to(point)
+        group.add(rim, inner_rim)
+
+    for index, offset in enumerate([0.0, 0.23, 0.47, 0.71]):
+        alpha = 0.08 + np.mod(phase * 0.055 + offset, 0.84)
+        center = interpolate(start, end, alpha)
+        glint = Line(
+            center + LEFT * 0.23 + UP * radius * 0.39,
+            center + RIGHT * 0.23 + UP * radius * 0.58,
+            color=PALETTE["text"],
+            stroke_width=2.3,
+        )
+        glint.set_opacity(0.12 + 0.16 * np.sin(phase * 1.35 + index) ** 2)
+        group.add(glint)
+
+    return group
+
+
 class ModeloTorcional(Scene):
     def construct(self):
         configure_scene(self)
@@ -231,16 +285,24 @@ class FrequenciaTorque(Scene):
             lambda: make_cylindrical_shaft(
                 shaft_start,
                 shaft_end,
-                radius=0.28,
-                twist=0.78 * np.sin(phase.get_value()),
-                bands=16,
+                radius=0.31,
+                twist=0.94 * np.sin(phase.get_value()),
+                bands=20,
             ).set_z_index(2)
+        )
+        shaft_surface = always_redraw(
+            lambda: make_animated_shaft_surface(
+                shaft_start,
+                shaft_end,
+                radius=0.31,
+                phase=phase.get_value(),
+            ).set_z_index(4)
         )
         torsion_wave = always_redraw(
             lambda: make_torsion_wave(
                 shaft_start,
                 shaft_end,
-                amplitude=0.19 + 0.06 * np.sin(phase.get_value()) ** 2,
+                amplitude=0.2 + 0.07 * np.sin(phase.get_value()) ** 2,
                 turns=5.2,
                 phase=1.15 * phase.get_value(),
                 color=PALETTE["resonance"],
@@ -269,7 +331,7 @@ class FrequenciaTorque(Scene):
             max_tip_length_to_length_ratio=0.05,
         )
         spectrum_title = Text("torque components", font_size=27, color=PALETTE["text"])
-        spectrum_title.move_to(spectrum_left + RIGHT * 1.95 + UP * 0.86)
+        spectrum_title.move_to(spectrum_left + RIGHT * 1.95 + UP * 1.36)
         spectrum_axis_label = MathTex(r"f", font_size=36, color=PALETTE["muted"]).next_to(spectrum_axis, RIGHT, buff=0.1)
 
         selected_x = shaft_center[0]
@@ -286,9 +348,9 @@ class FrequenciaTorque(Scene):
             top = base + UP * height
             stem = Line(base, top, color=color, stroke_width=6.2 if selected else 4.2)
             dot = Dot(top, radius=0.075 if selected else 0.052, color=color)
-            label = MathTex(label_text, font_size=34 if selected else 26, color=color)
+            label = MathTex(label_text, font_size=42 if selected else 34, color=color)
             if selected:
-                label.move_to(base + LEFT * 0.54 + DOWN * 0.34)
+                label.move_to(base + LEFT * 1.04 + DOWN * 0.34)
             else:
                 label.next_to(base, DOWN, buff=0.11)
             spectrum_components.add(VGroup(stem, dot, label))
@@ -328,7 +390,7 @@ class FrequenciaTorque(Scene):
         ).to_edge(DOWN, buff=0.32)
 
         self.play(Write(title), FadeIn(note, shift=DOWN * 0.1))
-        self.play(FadeIn(shaft), Create(torsion_wave), Create(mode_arc), FadeIn(mode_label))
+        self.play(FadeIn(shaft), FadeIn(shaft_surface), Create(torsion_wave), Create(mode_arc), FadeIn(mode_label))
         self.play(Create(spectrum_axis), FadeIn(spectrum_title), FadeIn(spectrum_axis_label))
         self.play(
             LaggedStart(*[FadeIn(component, shift=UP * 0.08) for component in spectrum_components], lag_ratio=0.12),
