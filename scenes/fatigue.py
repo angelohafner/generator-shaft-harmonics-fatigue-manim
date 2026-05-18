@@ -391,4 +391,23 @@ class Conclusao(Scene):
         self.play(LaggedStart(*[FadeIn(node, shift=UP * 0.1) for node in nodes], lag_ratio=0.08), Create(arrows))
         self.play(FadeIn(message, shift=UP * 0.12))
         self.play(FadeIn(mitigation_group, shift=UP * 0.12))
-        self.wait(1.7)
+        animated_top_icons = LaggedStart(
+            Wiggle(nodes[0][1], scale_value=1.08, rotation_angle=0.04),
+            Rotate(nodes[1][1][2], angle=TAU, about_point=nodes[1][1].get_center()),
+            Indicate(nodes[2][1][2], scale_factor=1.18, color=PALETTE["resonance"]),
+            Wiggle(nodes[3][1], scale_value=1.08, rotation_angle=0.035),
+            Indicate(nodes[4][1][1], scale_factor=1.35, color=PALETTE["danger"]),
+            lag_ratio=0.12,
+        )
+        animated_mitigations = LaggedStart(
+            *[
+                Indicate(item[0], scale_factor=1.12, color=PALETTE["electric"])
+                for item in mitigation_items
+            ],
+            lag_ratio=0.08,
+        )
+        self.play(
+            AnimationGroup(animated_top_icons, animated_mitigations, lag_ratio=0.0),
+            run_time=3.2,
+        )
+        self.wait(0.8)
