@@ -125,12 +125,13 @@ class ModeloTorcional(Scene):
         omega_eq = MathTex(r"\omega_n=\sqrt{\frac{K}{J_{eq}}}", font_size=36, color=PALETTE["text"])
         resonance_eq = MathTex(r"f_{torque}\approx f_n", font_size=38, color=PALETTE["resonance"])
         equations = VGroup(omega_eq, resonance_eq).arrange(RIGHT, buff=1.4).next_to(title, DOWN, buff=0.18)
+        equations.shift(DOWN * 0.38)
 
         phase = ValueTracker(0.0)
         amplitude = ValueTracker(0.18)
         frequency = ValueTracker(0.35)
-        left_center = LEFT * 4.25 + UP * 0.25
-        right_center = LEFT * 2.15 + UP * 0.25
+        left_center = LEFT * 4.25 + DOWN * 0.25
+        right_center = LEFT * 2.15 + DOWN * 0.25
         model_mid = (left_center + right_center) / 2
 
         left_disc = always_redraw(
@@ -174,7 +175,7 @@ class ModeloTorcional(Scene):
         model_label.move_to(model_mid + DOWN * 1.38)
 
         axes, curve, labels = make_resonance_plot(width=4.25, height=2.55)
-        plot = VGroup(axes, curve, labels).move_to(RIGHT * 2.85 + DOWN * 0.28)
+        plot = VGroup(axes, curve, labels).move_to(RIGHT * 2.85 + DOWN * 0.78)
         resonance_band = Rectangle(
             width=0.38,
             height=2.55,
