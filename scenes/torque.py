@@ -51,8 +51,8 @@ class TorqueEletromagnetico(Scene):
 
         phase = ValueTracker(0.0)
         pulse = ValueTracker(0.0)
-        left_center = LEFT * 3.75 + DOWN * 0.05
-        right_center = RIGHT * 3.05 + DOWN * 0.05
+        left_center = LEFT * 3.75 + DOWN * 0.55
+        right_center = RIGHT * 3.05 + DOWN * 0.55
         spring_center = (left_center + right_center) / 2
 
         turbine = make_turbine(radius=0.58, label="Turbine")
