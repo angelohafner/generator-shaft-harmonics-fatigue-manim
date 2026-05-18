@@ -352,23 +352,24 @@ class Conclusao(Scene):
                 )
             )
 
+        caution_font_size = 28
         caution_sentence = VGroup(
-            Text("An", font_size=22, color=PALETTE["text"]),
-            Text("isolated", font_size=22, color=PALETTE["text"]),
-            Text("harmonic", font_size=22, color=PALETTE["text"]),
-            Text("does", font_size=22, color=PALETTE["text"]),
-            Text("not", font_size=22, color=PALETTE["text"]),
-            Text("determine", font_size=22, color=PALETTE["text"]),
-            Text("failure.", font_size=22, color=PALETTE["text"]),
+            Text("An", font_size=caution_font_size, color=PALETTE["text"]),
+            Text("isolated", font_size=caution_font_size, color=PALETTE["text"]),
+            Text("harmonic", font_size=caution_font_size, color=PALETTE["text"]),
+            Text("does", font_size=caution_font_size, color=PALETTE["text"]),
+            Text("not", font_size=caution_font_size, color=PALETTE["text"]),
+            Text("determine", font_size=caution_font_size, color=PALETTE["text"]),
+            Text("failure.", font_size=caution_font_size, color=PALETTE["text"]),
         ).arrange(RIGHT, buff=0.13)
 
         message = VGroup(
             caution_sentence,
             VGroup(
-                Text("Risk increases with", font_size=18, color=PALETTE["muted"]),
-                MathTex(r"A_h,\ f_{torque}\approx f_n,\ \zeta,\ t,\ D", font_size=27, color=PALETTE["resonance"]),
-            ).arrange(RIGHT, buff=0.18),
-        ).arrange(DOWN, buff=0.1)
+                Text("Risk increases with", font_size=23, color=PALETTE["muted"]),
+                MathTex(r"A_h,\ f_{torque}\approx f_n,\ \zeta,\ t,\ D", font_size=35, color=PALETTE["resonance"]),
+            ).arrange(RIGHT, buff=0.22),
+        ).arrange(DOWN, buff=0.14)
         message.move_to(DOWN * 0.25)
 
         mitigation_title = Text("Mitigation", font_size=30, color=PALETTE["text"])
