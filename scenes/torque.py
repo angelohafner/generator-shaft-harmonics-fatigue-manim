@@ -201,29 +201,32 @@ class TorqueEletromagnetico(Scene):
 
         simple_eq = MathTex(
             r"J\frac{d^2\theta}{dt^2}=T_m-T_e(t)",
-            font_size=36,
+            font_size=44,
             color=PALETTE["text"],
         ).to_edge(DOWN, buff=0.9)
         full_eq = MathTex(
             r"J\frac{d^2\theta}{dt^2}+D\frac{d\theta}{dt}+K\theta=T_m-T_e(t)",
-            font_size=34,
+            font_size=42,
             color=PALETTE["text"],
-        ).to_edge(DOWN, buff=0.9)
+        )
+        if full_eq.width > 12.35:
+            full_eq.scale_to_fit_width(12.35)
+        full_eq.to_edge(DOWN, buff=0.8)
 
         def make_variable_definition(symbol: str, description: str) -> VGroup:
             """Create a compact definition with the variable rendered by LaTeX."""
-            variable = MathTex(symbol, font_size=23, color=PALETTE["text"])
-            meaning = Text(f": {description}", font_size=19, color=PALETTE["muted"])
-            return VGroup(variable, meaning).arrange(RIGHT, buff=0.04)
+            variable = MathTex(symbol, font_size=30, color=PALETTE["text"])
+            meaning = Text(f": {description}", font_size=25, color=PALETTE["muted"])
+            return VGroup(variable, meaning).arrange(RIGHT, buff=0.05)
 
         variable_note = VGroup(
             make_variable_definition(r"J", "inertia"),
             make_variable_definition(r"D", "damping"),
             make_variable_definition(r"K", "stiffness"),
             make_variable_definition(r"\theta", "twist angle"),
-        ).arrange(RIGHT, buff=0.26)
-        if variable_note.width > 11.6:
-            variable_note.scale_to_fit_width(11.6)
+        ).arrange(RIGHT, buff=0.34)
+        if variable_note.width > 12.25:
+            variable_note.scale_to_fit_width(12.25)
         variable_note.next_to(full_eq, DOWN, buff=0.18)
 
         self.play(Write(title), Write(power_eq), FadeIn(note, shift=DOWN * 0.1))
