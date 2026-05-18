@@ -19,6 +19,37 @@ from utils.plot_helpers import (
 )
 
 
+def _make_rotating_ghosts(source: Mobject, center: np.ndarray, color: str, pulse: float = 0.0) -> VGroup:
+    """Create translucent vector copies behind a rotating object."""
+    ghosts = VGroup()
+    for index, angle_lag in enumerate((0.16, 0.31, 0.47)):
+        ghost = source.copy()
+        ghost.clear_updaters()
+        ghost.rotate(-angle_lag, about_point=center)
+        ghost.set_fill(color, opacity=(0.15 + 0.06 * pulse) * (1 - index * 0.24))
+        ghost.set_stroke(color, opacity=(0.10 + 0.04 * pulse) * (1 - index * 0.25))
+        ghosts.add(ghost)
+    return ghosts
+
+
+def _make_rotational_arc_blur(center: np.ndarray, radius: float, phase: float, color: str, pulse: float = 0.0) -> VGroup:
+    """Create wide translucent arcs that read as rotational motion blur."""
+    blur = VGroup()
+    base_angle = 0.36 * phase
+    for index in range(4):
+        arc = Arc(
+            radius=radius + index * 0.025,
+            start_angle=base_angle - 0.50 - index * 0.16,
+            angle=0.68 - index * 0.055,
+            arc_center=center,
+            color=color,
+            stroke_width=15 - index * 2.2,
+        )
+        arc.set_stroke(opacity=(0.20 + 0.08 * pulse) * (1 - index * 0.18))
+        blur.add(arc)
+    return blur
+
+
 class IntroducaoHarmonicos(Scene):
     def construct(self):
         configure_scene(self)
@@ -187,6 +218,40 @@ class IntroducaoHarmonicos(Scene):
             .move_to(generator_center)
             .set_z_index(0)
         )
+        turbine_blur = always_redraw(
+            lambda: VGroup(
+                _make_rotating_ghosts(
+                    turbine[1],
+                    turbine_center,
+                    PALETTE["mechanical"],
+                    harmonic_pulse.get_value(),
+                ),
+                _make_rotational_arc_blur(
+                    turbine_center,
+                    0.82,
+                    phase.get_value(),
+                    PALETTE["mechanical"],
+                    harmonic_pulse.get_value(),
+                ),
+            ).set_z_index(2.55)
+        )
+        generator_blur = always_redraw(
+            lambda: VGroup(
+                _make_rotating_ghosts(
+                    VGroup(generator[2], generator[3]),
+                    generator_center,
+                    PALETTE["mechanical"],
+                    harmonic_pulse.get_value(),
+                ),
+                _make_rotational_arc_blur(
+                    generator_center,
+                    0.78,
+                    phase.get_value(),
+                    PALETTE["electric"],
+                    harmonic_pulse.get_value(),
+                ),
+            ).set_z_index(2.55)
+        )
 
         spinning_parts = [
             (turbine[1], turbine_center, 1.65),
@@ -252,9 +317,11 @@ class IntroducaoHarmonicos(Scene):
         self.play(
             FadeIn(turbine),
             FadeIn(shaft),
+            FadeIn(turbine_blur),
             FadeIn(turbine_motion),
             FadeIn(generator),
             FadeIn(field),
+            FadeIn(generator_blur),
             FadeIn(generator_motion),
             Create(wires),
             FadeIn(load),
