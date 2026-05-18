@@ -224,8 +224,8 @@ class FrequenciaTorque(Scene):
 
         phase = ValueTracker(0.0)
 
-        shaft_start = LEFT * 6.1 + DOWN * 1.54
-        shaft_end = RIGHT * 6.1 + DOWN * 1.54
+        shaft_start = LEFT * 6.72 + DOWN * 1.54
+        shaft_end = RIGHT * 6.72 + DOWN * 1.54
         shaft_center = (shaft_start + shaft_end) / 2
         shaft = always_redraw(
             lambda: make_cylindrical_shaft(
@@ -233,7 +233,7 @@ class FrequenciaTorque(Scene):
                 shaft_end,
                 radius=0.28,
                 twist=0.78 * np.sin(phase.get_value()),
-                bands=14,
+                bands=16,
             ).set_z_index(2)
         )
         torsion_wave = always_redraw(
