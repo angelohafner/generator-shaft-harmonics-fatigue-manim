@@ -13,8 +13,8 @@ from utils.plot_helpers import (
 )
 
 
-def make_fatigue_shaft(start: np.ndarray, end: np.ndarray, radius: float, twist: float) -> VGroup:
-    """Create a polished cylindrical shaft with torsion bands."""
+def make_fatigue_shaft(start: np.ndarray, end: np.ndarray, radius: float, twist: float, phase: float = 0.0) -> VGroup:
+    """Create a polished animated cylindrical shaft with torsion bands."""
     length = np.linalg.norm(end - start)
     center = (start + end) / 2
     height = 2 * radius
@@ -26,37 +26,98 @@ def make_fatigue_shaft(start: np.ndarray, end: np.ndarray, radius: float, twist:
         color=PALETTE["shaft"],
         stroke_width=2.5,
     )
-    body.set_fill(PALETTE["steel"], opacity=0.92)
+    body.set_fill(PALETTE["steel"], opacity=0.88)
     body.move_to(center)
+
+    upper_skin = RoundedRectangle(
+        width=length * 0.98,
+        height=height * 0.42,
+        corner_radius=height * 0.2,
+        stroke_width=0,
+        fill_color=PALETTE["shaft"],
+        fill_opacity=0.28,
+    )
+    upper_skin.move_to(center + UP * radius * 0.28)
+    lower_skin = RoundedRectangle(
+        width=length * 0.98,
+        height=height * 0.34,
+        corner_radius=height * 0.16,
+        stroke_width=0,
+        fill_color=PALETTE["background"],
+        fill_opacity=0.16,
+    )
+    lower_skin.move_to(center + DOWN * radius * 0.34)
 
     highlight = Line(
         center + LEFT * length / 2 + UP * radius * 0.45,
         center + RIGHT * length / 2 + UP * radius * 0.45,
         color=PALETTE["text"],
-        stroke_width=2,
+        stroke_width=2.2,
     )
-    highlight.set_opacity(0.28)
+    highlight.set_opacity(0.3 + 0.08 * np.sin(phase) ** 2)
     shadow = Line(
         center + LEFT * length / 2 + DOWN * radius * 0.58,
         center + RIGHT * length / 2 + DOWN * radius * 0.58,
         color=PALETTE["background"],
-        stroke_width=3,
+        stroke_width=3.6,
     )
     shadow.set_opacity(0.35)
 
-    left_cap = Ellipse(width=height * 0.5, height=height * 1.02, color=PALETTE["shaft"], stroke_width=2.2)
-    left_cap.set_fill(PALETTE["panel"], opacity=0.68).move_to(start)
-    right_cap = left_cap.copy().move_to(end)
+    caps = VGroup()
+    for index, point in enumerate([start, end]):
+        cap = Ellipse(width=height * 0.72, height=height * 1.22, color=PALETTE["shaft"], stroke_width=2.8)
+        cap.set_fill(PALETTE["panel"], opacity=0.72).move_to(point)
+        inner_cap = Ellipse(width=height * 0.45, height=height * 0.9, color=PALETTE["muted"], stroke_width=1.3)
+        inner_cap.set_opacity(0.3 + 0.12 * np.sin(phase + index * PI / 2) ** 2).move_to(point)
+        rim_glow = Arc(
+            radius=height * 0.63,
+            start_angle=-PI / 2,
+            angle=PI,
+            color=PALETTE["text"],
+            stroke_width=1.8,
+        )
+        rim_glow.set_width(height * 0.35)
+        rim_glow.set_height(height * 1.02)
+        rim_glow.set_opacity(0.18 + 0.12 * np.sin(phase + index) ** 2).move_to(point + UP * radius * 0.02)
+        caps.add(cap, inner_cap, rim_glow)
 
     bands = VGroup()
-    for alpha in np.linspace(0.12, 0.88, 8):
+    for alpha in np.linspace(0.08, 0.92, 13):
         x = interpolate(start, end, alpha)
-        band = Line(x + UP * radius * 0.92, x + DOWN * radius * 0.92, color=PALETTE["muted"], stroke_width=1.7)
-        band.rotate(twist * (alpha - 0.5) * 2.1, about_point=x)
-        band.set_opacity(0.72)
+        band = Line(
+            x + UP * radius * 0.92,
+            x + DOWN * radius * 0.92,
+            color=PALETTE["muted"],
+            stroke_width=1.55,
+        )
+        band.rotate(twist * (alpha - 0.5) * 2.3 + 0.12 * np.sin(phase + TAU * alpha), about_point=x)
+        band.set_opacity(0.48 + 0.3 * np.sin(phase + TAU * alpha) ** 2)
         bands.add(band)
 
-    return VGroup(body, left_cap, right_cap, highlight, shadow, bands)
+    glints = VGroup()
+    for index, offset in enumerate([0.02, 0.3, 0.58]):
+        alpha = 0.08 + np.mod(0.07 * phase + offset, 0.84)
+        x = interpolate(start, end, alpha)
+        glint = Line(
+            x + LEFT * 0.2 + UP * radius * 0.54,
+            x + RIGHT * 0.28 + UP * radius * 0.54,
+            color=PALETTE["text"],
+            stroke_width=2.1,
+        )
+        glint.set_opacity(0.12 + 0.18 * np.sin(phase * 1.4 + index) ** 2)
+        glints.add(glint)
+
+    stress_points = []
+    for alpha in np.linspace(0.02, 0.98, 120):
+        point = interpolate(start, end, alpha)
+        envelope = 0.35 + 0.65 * np.sin(PI * alpha)
+        y_offset = radius * 0.42 * envelope * np.sin(TAU * 2.8 * alpha + 1.25 * phase)
+        stress_points.append(point + UP * y_offset)
+    stress_ribbon = VMobject(color=PALETTE["fatigue"], stroke_width=2.8)
+    stress_ribbon.set_points_smoothly(stress_points)
+    stress_ribbon.set_opacity(0.62)
+
+    return VGroup(body, upper_skin, lower_skin, caps, highlight, shadow, bands, glints, stress_ribbon)
 
 
 class FadigaEixoGerador(Scene):
@@ -91,6 +152,7 @@ class FadigaEixoGerador(Scene):
                 right,
                 radius=0.2,
                 twist=0.88 * np.sin(phase.get_value()),
+                phase=phase.get_value(),
             )
         )
         torque_left = always_redraw(
@@ -118,6 +180,7 @@ class FadigaEixoGerador(Scene):
             lambda: make_crack(length=0.08 + 0.72 * damage.get_value())
             .rotate(PI / 2)
             .move_to(LEFT * 1.05 + UP * (1.18 + 0.12 * damage.get_value()))
+            .set_z_index(10)
         )
 
         cycles_label = Text("cycles", font_size=21, color=PALETTE["muted"]).move_to(LEFT * 5.35 + UP * 2.45)
