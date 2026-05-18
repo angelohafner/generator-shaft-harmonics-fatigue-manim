@@ -328,7 +328,7 @@ class Conclusao(Scene):
     def construct(self):
         configure_scene(self)
 
-        title = make_title("Technical conclusion", font_size=34)
+        title = make_title("Technical conclusion", font_size=42)
 
         nodes = VGroup(
             make_icon_node("Harmonics", make_harmonics_icon(), PALETTE["harmonic3"]),
@@ -372,7 +372,7 @@ class Conclusao(Scene):
         ).arrange(DOWN, buff=0.14)
         message.move_to(DOWN * 0.25)
 
-        mitigation_title = Text("Mitigation", font_size=30, color=PALETTE["text"])
+        mitigation_title = Text("Mitigation", font_size=40, color=PALETTE["text"])
         mitigation_items = VGroup(
             make_mitigation_icon("modes", "modes"),
             make_mitigation_icon("filter", "filters"),
@@ -384,7 +384,7 @@ class Conclusao(Scene):
         mitigation_y = -2.62
         for item, x_pos in zip(mitigation_items, np.linspace(-5.85, 5.85, len(mitigation_items))):
             item.move_to(np.array([x_pos, mitigation_y, 0.0]))
-        mitigation_title.move_to(UP * -1.72)
+        mitigation_title.move_to(UP * -1.18)
         mitigation_group = VGroup(mitigation_title, mitigation_items)
 
         self.play(Write(title))
